@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { parseJSONSafe } from '../utils/fetchUtils';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -16,13 +17,13 @@ export default function Login() {
         body: JSON.stringify({ username, password })
       });
       
-      const data = await response.json();
+      const data = await parseJSONSafe(response);
       
       if (!response.ok) {
-        throw new Error(data.detail || 'Login failed');
+        throw new Error(data?.detail || 'Login failed');
       }
       
-      localStorage.setItem('token', data.access_token);
+      localStorage.setItem('token', data?.access_token || '');
       navigate('/dashboard');
     } catch (err) {
       setError(err.message);

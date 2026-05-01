@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { parseJSONSafe } from '../utils/fetchUtils';
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -32,8 +33,14 @@ export default function AdminDashboard() {
         throw new Error('Failed to fetch admin data');
       }
 
-      setUsers(await usersRes.json());
-      setPosts(await postsRes.json());
+      const usersData = await parseJSONSafe(usersRes);
+      const postsData = await parseJSONSafe(postsRes);
+      if (!Array.isArray(usersData) || !Array.isArray(postsData)) {
+        throw new Error('Admin response was not valid JSON');
+      }
+
+      setUsers(usersData);
+      setPosts(postsData);
     } catch (err) {
       setError(err.message);
     }
@@ -41,15 +48,15 @@ export default function AdminDashboard() {
 
   const handleDeletePost = async (postId) => {
     try {
-      const res = await fetch(`http://localhost:8000/api/posts/${postId}`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/${postId}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
         fetchData();
       } else {
-        const data = await res.json();
-        setError(data.detail || 'Failed to delete post');
+        const data = await parseJSONSafe(res);
+        setError(data?.detail || 'Failed to delete post');
       }
     } catch (err) {
       setError('Connection error');

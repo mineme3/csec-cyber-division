@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { parseJSONSafe } from '../utils/fetchUtils';
 
 export default function Register() {
   const [username, setUsername] = useState('');
@@ -16,10 +17,10 @@ export default function Register() {
         body: JSON.stringify({ username, password })
       });
       
-      const data = await response.json();
+      const data = await parseJSONSafe(response);
       
       if (!response.ok) {
-        throw new Error(data.detail || 'Registration failed');
+        throw new Error(data?.detail || 'Registration failed');
       }
       
       // Auto login or redirect to login

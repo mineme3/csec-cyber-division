@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { parseJSONSafe } from '../utils/fetchUtils';
 
 export default function Dashboard() {
   const [posts, setPosts] = useState([]);
@@ -16,13 +17,21 @@ export default function Dashboard() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        const data = await res.json();
-        setProfile(data);
+        const data = await parseJSONSafe(res);
+        if (data) {
+          setProfile(data);
+        } else {
+          setError('Invalid profile response');
+        }
       } else if (res.status === 401) {
         handleLogout();
+      } else {
+        const data = await parseJSONSafe(res);
+        setError(data?.detail || 'Failed to load profile');
       }
     } catch (err) {
       console.error(err);
+      setError('Connection error');
     }
   };
 
@@ -32,8 +41,8 @@ export default function Dashboard() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        const data = await res.json();
-        setPosts(data);
+        const data = await parseJSONSafe(res);
+        setPosts(Array.isArray(data) ? data : []);
       }
     } catch (err) {
       console.error(err);
@@ -67,8 +76,8 @@ export default function Dashboard() {
         setNewPost('');
         fetchPosts(); // refresh posts
       } else {
-        const data = await res.json();
-        setError(data.detail || 'Failed to create post');
+        const data = await parseJSONSafe(res);
+        setError(data?.detail || 'Failed to create post');
       }
     } catch (err) {
       setError('Connection error');

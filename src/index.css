@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hacker-dark: #0d1117;
+  --color-hacker-darker: #010409;
+  --color-hacker-green: #00ff00;
+  --color-hacker-red: #ff0000;
+}
+
+@layer base {
+  body {
+    @apply bg-hacker-darker text-hacker-green font-mono m-0 min-h-screen;
+  }
+}
+
+@layer components {
+  .btn-hacker {
+    @apply bg-transparent border border-hacker-green text-hacker-green px-4 py-2 hover:bg-hacker-green hover:text-hacker-darker transition-colors duration-200 outline-none focus:ring-2 focus:ring-hacker-green/50;
+  }
+  
+  .input-hacker {
+    @apply w-full bg-hacker-dark border border-hacker-green/50 text-hacker-green px-3 py-2 outline-none focus:border-hacker-green focus:ring-1 focus:ring-hacker-green placeholder-hacker-green/30;
+  }
+  
+  .card-hacker {
+    @apply bg-hacker-dark border border-hacker-green/30 p-6 rounded-none shadow-[0_0_10px_rgba(0,255,0,0.1)];
+  }
+}

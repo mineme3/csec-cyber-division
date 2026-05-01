@@ -12,7 +12,7 @@ export default function Dashboard() {
 
   const fetchProfile = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/users/me/profile', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/users/me/profile`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   const fetchPosts = async () => {
     try {
-      const res = await fetch('http://localhost:8000/api/posts/', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts/`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
@@ -54,7 +54,7 @@ export default function Dashboard() {
     if (!newPost.trim()) return;
 
     try {
-      const res = await fetch('http://localhost:8000/api/posts/', {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/posts`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,11 +86,6 @@ export default function Dashboard() {
         <div>
           <span className="opacity-70 text-sm">LOGGED IN AS: </span>
           <span className="font-bold text-lg">{profile?.username || 'LOADING...'}</span>
-          {profile?.secret && (
-             <div className="mt-2 text-yellow-400 font-bold text-sm">
-               [SECRET FOUND]: {profile.secret}
-             </div>
-          )}
         </div>
         <div className="flex gap-4">
           {profile?.username === 'admin' && (
@@ -128,7 +123,6 @@ export default function Dashboard() {
              <h4 className="font-bold border-b border-hacker-green/30 pb-1 mb-2">SYSTEM.INFO()</h4>
              <p>&gt; SECURE MODE: ENABLED</p>
              <p>&gt; AUTHORIZATION: STRICT</p>
-             <p>&gt; IDOR/BOLA: MITIGATED</p>
           </div>
         </div>
 
@@ -143,7 +137,9 @@ export default function Dashboard() {
             posts.map(post => (
               <div key={post.id} className="card-hacker bg-black/40">
                 <div className="flex justify-between items-start mb-2 border-b border-hacker-green/20 pb-2 text-sm">
-                  <div className="font-bold">@{post.author_username}</div>
+                  <div className="font-bold">
+                      {post.author_username === "admin" ? "captain" : post.author_username}
+                  </div>
                   <div className="opacity-50">{new Date(post.created_at).toLocaleString()}</div>
                 </div>
                 <div className="whitespace-pre-wrap break-words">{post.content}</div>

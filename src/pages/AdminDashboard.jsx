@@ -20,8 +20,8 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     try {
       const [usersRes, postsRes] = await Promise.all([
-        fetch('http://localhost:8000/api/users/', { headers: { 'Authorization': `Bearer ${token}` } }),
-        fetch('http://localhost:8000/api/posts/', { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(`${import.meta.env.VITE_API_URL}/api/users`, { headers: { 'Authorization': `Bearer ${token}` } }),
+        fetch(`${import.meta.env.VITE_API_URL}/api/posts`, { headers: { 'Authorization': `Bearer ${token}` } })
       ]);
 
       if (!usersRes.ok || !postsRes.ok) {
